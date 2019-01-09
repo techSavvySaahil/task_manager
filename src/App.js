@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import './styles/App.css';
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
-import Board from './components/board';
 import Airtable from 'airtable';
+
 import Config from './config/API';
+import './styles/App.css';
+import Board from './components/board';
 
 const base = new Airtable({apiKey: Config.API_key}).base('appS0hWdEtDwy1hCW');
 
@@ -79,6 +80,7 @@ class App extends Component {
       });
     }
   }
+
   componentDidMount() {
     // call AirTable API for getting tasks
     this.populateRecords();
@@ -88,12 +90,14 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          <span className="title">Task Manager</span>
+          <span className="title">Agent Dashboard</span>
         </header>
+
         <div className="wrapper">
-          {(this.state.loading && <div style={{width:"100%", height: "100vh", position:"fixed", backgroundColor:"#00000061"}}>
-            <p style={{color:"white",marginTop:"15%"}}>Loading...</p>
+          {(this.state.loading && <div className="loader-wrapper">
+            <p>Loading...</p>
           </div>)}
+
           {allStatus.map(status => (
             <Board key={status} name={status} tasks={this.state[status]} updateRecord={this.updateRecord} />
           ))}
