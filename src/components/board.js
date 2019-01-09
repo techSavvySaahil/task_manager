@@ -4,17 +4,10 @@ import Task from './task';
 
 const dropTarg = {
   drop(props, monitor, component) {
-    if (monitor.didDrop()) {
-      // If you want, you can check whether some nested
-      // target already handled drops
-      return;
-    }
-
     // Obtain the dragged item
     const item = monitor.getItem();
-    console.log(component);
-    // TODO: function for changing status - call the callback with the reqd params(ie. id, status)
-    props.updateRecord(item.id, props.name);
+    // call the callback with the reqd params(ie. id, status)
+    props.updateRecord(item.id, item.status, props.name);
   }
 };
 
@@ -37,7 +30,7 @@ class Board extends React.Component {
 		return connectDropTarget(
 			<div className="board">
 				<div className="board-title">{this.props.name}</div>
-				{this.props.tasks.map(task=>
+				{Object.values(this.props.tasks).map(task=>
 					<Task key={task.id} task={task} />
 				)}
 			</div>

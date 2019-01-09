@@ -4,8 +4,6 @@ import {DragSource} from 'react-dnd';
 const compSource = {
   beginDrag(props, monitor, component) {
     // Return the data describing the dragged item
-    console.log(props);
-    console.log(props.task.id);
     const item = { comp: "task", id: props.task.id, status: props.task.fields.status };
     return item;
   }

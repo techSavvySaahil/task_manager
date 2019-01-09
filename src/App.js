@@ -15,9 +15,9 @@ class App extends Component {
     super(props);
 
     this.state = {
-      Created: [],
-      Won: [],
-      Lost: [],
+      Created: {},
+      Won: {},
+      Lost: {},
       loading: false
     }
 
@@ -27,44 +27,55 @@ class App extends Component {
           view: 'Grid view'
       }).firstPage((err, records)=> {
           if (err) {
-            console.error(err);
             alert("Couldn't populate records. Please reload the page.")
             this.setState({loading: false});
             return;
           }
           let status = "";
           let obj = {
-            Created: [],
-            Won: [],
-            Lost: []
+            Created: {},
+            Won: {},
+            Lost: {}
           };
           if(records) {
             records.forEach((record)=> {
                 status = record.fields.status;
-                obj[status].push(record)
+                obj[status][record.id] = record;
             });
-            this.setState({Created: obj.Created});
-            this.setState({Won: obj.Won});
-            this.setState({Lost: obj.Lost});
+            this.setState({Created: Object.assign({}, obj.Created)});
+            this.setState({Won: Object.assign({}, obj.Won)});
+            this.setState({Lost: Object.assign({}, obj.Lost)});
             this.setState({loading: false});
           }
         });
     }
     
-    this.updateRecord = (id, newValue, key="status")=> {
-      this.setState({loading: true});
-      console.log(this.populateRecords);
+    this.updateRecord = (id, lastValue, newValue, key="status")=> {
       base('Imported table').update(id, {
         [key]: newValue
       }).then((record)=> {
-          // if (err) { console.error(err); return; }
-          console.log(record.get('status'));
-          this.populateRecords();
       })
       .catch(error=> {
-        console.log(error);
         alert("Couldn't change the status. Please try again.")
-        this.setState({loading: false});
+      });
+
+      let prevBoard = Object.assign({}, this.state[lastValue]);
+      let newBoard = Object.assign({}, this.state[newValue]);
+
+      let task = prevBoard[id];
+      // Updating the status
+      task.fields.status = newValue;
+
+      // Adding the task to the new board
+      newBoard[id] = task;
+      this.setState({
+        [newValue]: newBoard
+      });
+
+      // let's delete it from the previous board
+      delete prevBoard[id];
+      this.setState({
+        [lastValue]: prevBoard
       });
     }
   }
@@ -73,22 +84,6 @@ class App extends Component {
     this.populateRecords();
   }
   
-
-  // const updateStatus = ({task, newStatus}) => {
-  //   let id = task.id;
-  //   let lastStatus = task.status;
-  //   task.status = newStatus;
-  //   // first let's delete it from the previous status board
-  //   delete this.state[lastStatus][id];
-  //   this.setState({
-  //     [lastStatus]: this.state[lastStatus]
-  //   });
-  //   // now let's add it to the new status board
-  //   this.state[newStatus][id] = task;
-  //   this.setState({
-  //     [newStatus]: this.state[newStatus]
-  //   });
-  // }
   render() {
     return (
       <div className="App">
