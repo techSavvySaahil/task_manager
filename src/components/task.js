@@ -24,6 +24,7 @@ class Task extends React.Component {
 			<div className="task">
 				<div className="text-left">Customer: {this.props.task.fields.customer_name}</div>
 				<div className="text-left">Contact: {this.props.task.fields.customer_contact_no}</div>
+				<br />
 				<div className="text-right">Agent: {this.props.task.fields.agent_name}</div>
 			</div>
 		)
